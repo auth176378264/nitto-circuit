@@ -1,0 +1,50 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    
+    <!-- Webeyez Script -->
+    <script type="text/javascript" src="https://sec.webeyez.com/js/de4f14ba-03e4-4262-9af9-a053095b65f2/wzbody.js" async></script>
+
+    <script>
+        // Google Tag Manager/Analytics Data Layer initialization
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ 
+            'accountID' : 'anonymous',
+            'userID' : 'anonymous',
+            'sessionID' : ''
+        });
+    </script>  
+</head>
+
+<body>
+    <!-- Container to show the Gigya login screen -->
+    <div id="container"></div>
+
+    <!-- Gigya JS SDK -->
+    <script type="text/javascript" src="https://cdns.gigya.com/js/gigya.js?apiKey=3_kyRw10ebzit05sJc_rONay1f3wxPBaJaaHWPiV4YvjYv3_82qPIaTl1tKw3dK-wC"></script>
+
+    <script>
+        function onGigyaServiceReady() {
+            gigya.accounts.addEventHandlers({
+                onLogin : function(response) {
+                    console.log(response);
+                    console.log("onlogin event");
+                    gigya.fidm.saml.continueSSO();  // Continue Single Sign-On after login
+                }
+            });
+            gigya.accounts.showScreenSet({
+                screenSet : "Default-RegistrationLogin",
+                startScreen : "gigya-login-screen",
+                containerID : "container"  // Container ID where the login screen will be rendered
+            });
+        }
+    </script> 
+
+    <!-- Incapsula Security Script -->
+    <script type="text/javascript" src="/_Incapsula_Resource?SWJIYLWA=719d34d31c8e3a6e6fffd425f7e032f3&ns=8&cb=1183671413" async></script>
+</body>
+
+</html>
