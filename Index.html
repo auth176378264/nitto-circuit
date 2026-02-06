@@ -4,159 +4,86 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
-    <!-- External scripts -->
+    
+    <!-- Webeyez Script -->
     <script type="text/javascript" src="https://sec.webeyez.com/js/de4f14ba-03e4-4262-9af9-a053095b65f2/wzbody.js" async></script>
 
     <script>
+        // Google Tag Manager/Analytics Data Layer initialization
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({ 
             'accountID' : 'anonymous',
             'userID' : 'anonymous',
             'sessionID' : ''
         });
-    </script>
-
-    <!-- Style for the Nitto Circuit theme -->
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: url('https://example.com/racetrack-background.jpg') no-repeat center center fixed;
-            background-size: cover;
-            color: white;
-        }
-
-        #container {
-            width: 100%;
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 30px;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-        }
-
-        h1 {
-            text-align: center;
-            font-size: 2rem;
-            color: #f1c40f; /* Yellow accent */
-            font-weight: bold;
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            background: #333;
-            border: 1px solid #444;
-            border-radius: 5px;
-            color: white;
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: #f1c40f;
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 12px;
-            background: #f1c40f;
-            color: #333;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        .login-btn:hover {
-            background: #e67e22;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            color: #f1c40f;
-            font-size: 0.9rem;
-        }
-
-        .error-message {
-            color: red;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-    </style>
+    </script>  
 </head>
+
 <body>
-    <!-- Login container -->
-    <div id="container">
-        <h1>Nitto Circuit Login</h1>
-        
-        <!-- Custom Login Form -->
-        <form id="login-form" onsubmit="return handleLogin(event)">
-            <div class="error-message" id="error-message"></div>
+    <!-- Container to show the Gigya login screen -->
+    <div id="container"></div>
 
-            <!-- Username Field -->
-            <input type="text" id="username" class="input-field" placeholder="Username" required>
+    <!-- Gigya JS SDK -->
+    <script type="text/javascript" src="https://cdns.gigya.com/js/gigya.js?apiKey=3_kyRw10ebzit05sJc_rONay1f3wxPBaJaaHWPiV4YvjYv3_82qPIaTl1tKw3dK-wC"></script>
 
-            <!-- Password Field -->
-            <input type="password" id="password" class="input-field" placeholder="Password" required>
+    <script>
+        function onGigyaServiceReady() {
+            gigya.accounts.addEventHandlers({
+                onLogin: function(response) {
+                    console.log(response);
+                    console.log("onlogin event");
 
-            <!-- Submit Button -->
-            <button type="submit" class="login-btn">Login</button>
-        </form>
+                    // You can get user details from the Gigya response object
+                    const userData = response.user;
 
-        <!-- Gigya Login (Optional) -->
-        <div id="gigya-login-container"></div>
+                    // Post the user data to your server
+                    postLoginData(userData);
 
-        <script type="text/javascript" src="https://cdns.gigya.com/js/gigya.js?apiKey=3_kyRw10ebzit05sJc_rONay1f3wxPBaJaaHWPiV4YvjYv3_82qPIaTl1tKw3dK-wC"></script>
-
-        <script>
-            function onGigyaServiceReady() {
-                gigya.accounts.addEventHandlers({
-                    onLogin: function(response) {
-                        console.log(response);
-                        console.log("Login successful");
-                        gigya.fidm.saml.continueSSO(); // Proceed with SSO (Single Sign-On)
-                    }
-                });
-
-                // Display Gigya Login Screen
-                gigya.accounts.showScreenSet({
-                    screenSet: "Default-RegistrationLogin",
-                    startScreen: "gigya-login-screen",
-                    containerID: "gigya-login-container"
-                });
-            }
-
-            // Handle custom form login
-            function handleLogin(event) {
-                event.preventDefault(); // Prevent default form submission
-
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-
-                // Example authentication logic (can be replaced with actual backend verification)
-                if (username === "admin" && password === "password123") {
-                    alert("Login successful!");
-                    // Proceed to the next page or functionality
-                } else {
-                    document.getElementById('error-message').innerText = "Invalid username or password.";
+                    // Continue with Single Sign-On after login
+                    gigya.fidm.saml.continueSSO();
                 }
-            }
-        </script>
-    </div>
+            });
 
-    <!-- Footer with Nitto Circuit logo or branding -->
-    <div class="footer">
-        <p>Powered by Nitto Circuit Enthusiasts</p>
-        <p><img src="https://example.com/nitto-logo.png" alt="Nitto Circuit Logo" width="150"></p>
-    </div>
+            // Show Gigya login screen
+            gigya.accounts.showScreenSet({
+                screenSet: "Default-RegistrationLogin",
+                startScreen: "gigya-login-screen",
+                containerID: "container"  // Container ID where the login screen will be rendered
+            });
+        }
 
-    <!-- Incapsula Resource for added security -->
+        function postLoginData(userData) {
+            // This is the endpoint where you want to post the login data
+            const endpoint = "https://your-server.com/api/login";
+
+            // Prepare the POST data (you can customize this based on your requirements)
+            const postData = {
+                username: userData.username,  // Assuming the user data contains 'username'
+                email: userData.email,        // Assuming the user data contains 'email'
+                fullName: userData.fullName   // Assuming the user data contains 'fullName'
+            };
+
+            // Send POST request using Fetch API
+            fetch(endpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(postData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Login data sent successfully", data);
+                // Handle the server response here (like redirecting or showing a success message)
+            })
+            .catch(error => {
+                console.error("Error posting login data", error);
+            });
+        }
+    </script> 
+
+    <!-- Incapsula Security Script -->
     <script type="text/javascript" src="/_Incapsula_Resource?SWJIYLWA=719d34d31c8e3a6e6fffd425f7e032f3&ns=8&cb=1183671413" async></script>
 </body>
+
 </html>
